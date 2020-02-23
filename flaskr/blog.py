@@ -43,4 +43,19 @@ def create():
 		title = request.form['title']
 		body = request.form['body']
 		error = None
-		
+
+		if not title:
+			error = "Title is Required"
+		if error is not None:
+			flash(error)
+		else:
+			db = get_db()
+			db.excute(
+				'INSERT INTO post (title, body, author_id)'
+				' VALUES ( ?, ?, ? )',
+				(title, body, g.user['id'])
+			)
+			db.commit()
+			return redirect(urlfor('blog.index'))
+	return render_template('blog/create.html')
+	
